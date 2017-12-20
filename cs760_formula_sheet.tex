@@ -1,0 +1,520 @@
+\documentclass[letterpaper,fontsize=5pt]{scrartcl}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{paralist}
+\usepackage{epstopdf}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyvrb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{float}
+\usepackage{paralist}
+\usepackage[svgname]{xcolor}
+
+\usepackage{array}
+%\usepackage{times}
+\usepackage{url}
+\usepackage{fancyhdr}
+\usepackage{comment}
+\usepackage{environ}
+\usepackage{textcomp}
+\usepackage{caption}
+
+\usepackage{enumerate}
+%\usepackage{enumitem}
+%\setlist[enumerate]{itemsep=0mm}
+
+\renewenvironment{itemize}[1]{\begin{compactitem}#1}{\end{compactitem}}
+\renewenvironment{enumerate}[1]{\begin{compactenum}#1}{\end{compactenum}}
+\renewenvironment{description}[0]{\begin{compactdesc}}{\end{compactdesc}}
+
+% From http://www.terminally-incoherent.com/blog/2007/09/19/latex-squeezing-the-vertical-white-space/
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\topsep}{0pt}
+\setlength{\partopsep}{0pt}
+
+% Also from http://www.terminally-incoherent.com/blog/2007/09/19/latex-squeezing-the-vertical-white-space/
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{*0}{*0}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[]
+\newtheorem{conjecture}{Conjecture}[]
+\newtheorem{example}{Example}[]
+\newtheorem{theorem}{Theorem}[]
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\floatname{algorithm}{Procedure}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\br}[1]{\{#1\}}
+\newcommand{\Lagr}{\mathcal{L}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\newcommand{\vc}[1]{\boldsymbol{#1}}
+\newcommand{\xv}{\vc{x}}
+\newcommand{\Sigmav}{\vc{\Sigma}}
+\newcommand{\alphav}{\vc{\alpha}}
+\newcommand{\muv}{\vc{\mu}}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\geometry{
+  top=0.2cm,            % <-- you want to adjust this
+  inner=0.2cm,
+  outer=0.2cm,
+  bottom=0.2cm,
+}
+
+\begin{document}
+\begin{multicols}{2}
+	
+%%%%%%%%%%
+\section{Evaluating models and algorithms}
+\begin{enumerate}
+	\item \textbf{Cross validation}: partition data into $n$ subsamples; iteratively leave one subsample out for the test set and train on the remaining data
+	\item \textbf{Confusion matrices}:
+	\begin{center}
+		\begin{tabular}{ c | c | c | }
+			& actual class $+$ & actual class $-$ \\ 
+			\hline
+			predicted class $+$ & TP & FP \\ 
+			\hline 
+			predicted class $-$ & FN & TN \\
+			\hline
+		\end{tabular}\\
+	\end{center}
+	% \begin{center} $accuracy = \frac{TP+TN}{TP+FP+FN+TN}$  \hfill $error = \frac{FP+FN}{TP+FP+FN+TN}$ \end{center} 
+	% \begin{center} $TPR = \frac{TP}{TP+FN}$ \hfill $FPR = \frac{FP}{TN+TP}$ \end{center}
+	\begin{center}
+		\begin{tabular}{ c  c }
+			$accuracy = \frac{TP+TN}{TP+FP+FN+TN}$ & $error = \frac{FP+FN}{TP+FP+FN+TN}$\\ $TPR = \frac{TP}{TP+FN}$ & $FPR = \frac{FP}{TN+TP}$ 
+		\end{tabular}
+	\end{center}
+	\item \textbf{Common plots}:
+	\begin{enumerate}
+		\item Learning curves: accuracy v. sample size
+		\item Receiver operating characteristic (ROC) curve for binary classification task: TPR v. FPR as a threshold on the confidence of an instance being positive is varied; best result: $\Gamma$-shaped curve
+		\item Precision recall (PR) curve for binary classification task:
+		\begin{enumerate}
+			\item recall = TPR $= \frac{TP}{TP+FN}$ \hfill precision = positive predictive value $= \frac{TP}{TP+FP}$
+			\item $P$ v. $R$ is plotted as a threshold on the confidence of an instance being positive is varied
+			\item Best result: curve looks like $\Gamma$ folded over vertical axis
+		\end{enumerate}
+	\end{enumerate}
+	\item \textbf{Confidence interval}: with approximately C\% probability, the true error lies in the interval \begin{center} $error_s(h) + z_c \sqrt{\frac{error_s(h)(1-error_s(h))}{n}}$ \end{center}	where $z_c$ is a constant that depends on C, e.g. $z_c = 1.96$ for 95\% confidence. (When $n \geq 30$ and $p$ is not too extreme, the normal distribution is a good approximation to the binomial distribution.)
+	\item \textbf{Paired $t$ testing}:
+	\begin{enumerate}
+		\item Calculate the sample mean, $\bar{\delta} = \frac{1}{n} \sum\limits_{i=1}^n \delta_i$
+		\item Calculate the t-statistic, $t = \frac{\bar{\delta}} {\sqrt{\frac{1}{n(n-1)}  \sum\limits_{i=1}^n (\delta_i - \bar{\delta})^2}}$
+		\item Use look-up table to relate t-statistic to p-value; reject null hypothesis ($H_o$) if $p \leq 0.05$
+		\item Note: one-tailed $t$-test evaluates whether system A is better than system B; two-tailed $t$-test evaluates whether the accuracy of the two systems are different
+	\end{enumerate}
+\end{enumerate}
+%\newpage
+%%%%%%%%%%
+\section{Decision trees}
+	\begin{enumerate}
+		\item \textbf{Entropy}: $\mathbb{H}(X) \triangleq -\sum\limits_{k=1}^K p(X=k) \log_{2} p(X=k)$
+		\item \textbf{Cross entropy}: $\mathbb{H}(p,q) \triangleq - \sum\limits_{k} p_k \log q_k$
+		\item \textbf{Conditional entropy}: $\mathbb{H}(Y|X) = \sum\limits_{x\in X} P(X=x)\mathbb{H}(Y|X=x)$ \\ where $\mathbb{H}(Y|X=x) = - \sum\limits_{y\in Y} P(Y=y|X=x) \log_{2}P(Y=y|X=x)$
+		\item \textbf{Information gain}: $\mathbb{I}(X,Y) = \mathbb{H}(X) - \mathbb{H}(X|Y) = \mathbb{H}(Y) - \mathbb{H}(Y|X)$
+		\item \textbf{Gain ratio}: $GainRatio(D,S) = \frac{InfoGain(D,S)}{\mathbb{H}_D(s)} = \frac{\mathbb{H}_D(y) - \mathbb{H}_D(Y|S)}{\mathbb{H}_D(s)}$
+		\item \textbf{Pseudo-code learning procedure}: MakeSubTree, DetermineCandidateSplits, StoppingCriteriaMet, FindBestSplit, MakeSubTree
+		\item \textbf{Regression trees}: leaves have functions that predict numeric values; CART algorithm minimizes squared error for determining splits
+		\item \textbf{Implementation details}:
+			\begin{enumerate}
+				\item For numeric features, can use midpoint of each considered interval as the threshold
+				\item Methods to avoid overfitting: early stopping, post-pruning (with validation data set)
+			\end{enumerate}
+	\end{enumerate}
+%\newpage
+%%%%%%%%%%
+\section{Instance-based methods, e.g. k-Nearest Neighbor (k-NN)}
+	\begin{enumerate}
+		% \item \textbf{Training algorithm}: for each training example $<x,f(x)>$, add the example to the list \emph{training\_examples}
+		\item \textbf{k-NN classification}: approximate a discrete-valued function f: $\mathbb{R}^{n} \rightarrow V$, given a query instance $x_q$ to be classified
+			\begin{enumerate}
+				\item Let $x_1 ... x_k$ denote the $k$ instances from \emph{training\_examples} that are nearest to $x_q$
+				\item Return: $\hat{f}(x_q) \leftarrow \underset{v\in V}{argmax} \sum\limits_{i=1}^k \delta(v,f(x_i))$ where $\delta(a,b) = 1$ if $a=b$ and $\delta(a,b)=0$ otherwise
+				\item For distanced-weighted k-NN, return: $\hat{f}(x_q) \leftarrow \underset{v\in V}{argmax} \sum\limits_{i=1}^k w_i \delta(v,f(x_i))$ \\ where $w_i \equiv \frac{1}{d(x_q,x_i)^2}$
+			\end{enumerate}
+		\item \textbf{k-NN regression}: approximate a continuous-valued function f: $\mathbb{R}^{n} \rightarrow \mathbb{R}$, given a query instance $x_q$ to be classified
+			\begin{enumerate}
+				\item Let $x_1 ... x_k$ denote the $k$ instances from \emph{training\_examples} that are nearest to $x_q$
+				\item Return: $\hat{f}(x_q) \leftarrow \frac{\sum_{i=1}^{k} f(x_i)}{k}$
+				\item For distance-weighted k-NN, return: $\hat{f}(x_q) \leftarrow \frac{\sum_{i=1}^{k} w_i f(x_i)}{w_i}$
+			\end{enumerate}
+		\item \textbf{Distance metrics for continuous features}:
+			\begin{enumerate}
+				\item Euclidean distance: $d(x^{(i)}, x^{(j)}) = \sqrt{\sum\limits_f (x_f^{(i)} + x_f^{(j)})^2}$
+				\item Manhattan distance: $d(x^{(i)}, x^{(j)}) = \sum\limits_f \abs{x_f^{(i)} + x_f^{(j)}}$
+			\end{enumerate}
+		\item \textbf{Computational speed improvements}:
+			\begin{enumerate}
+				\item Edited-NN: don't retain every training instance; use \emph{incremental delection} or \emph{incremental growth}
+				\item k-d tree: use a data structure to look up nearest neighbors
+			\end{enumerate}
+		\item \textbf{Locally weighted regression}: Approximate the target function $f$ near $x_q$ using a linear function of the form $\hat{f}(x) = w_o + w_1 a_1(x) + ... + w_n a_n(x)$
+			\begin{enumerate}
+				% \item Minimize the squared error over the k-NNs: \\ $E_1(x_q) \equiv \sum\limits_{x\in\:k-NNs\:of\:x_q} (f(x)-\hat{f}(x))^2$
+				% \item Minimize the squared error over the entire set $D$ of training examples, while weighing the error of each training example by some decreasing function $K$ of its distance from $x_q$: \\ $E_2(x_q) \equiv 1/2 \sum\limits_{x\in D} (f(x)-\hat{f}(x))^2 K(d(x_q,x))$
+				\item Optimal loss function: $E_3(x_q) \equiv 1/2 \sum\limits_{x\in\:k-NNs\:of\:x_q} (f(x)-\hat{f}(x))^2 K(d(x_q,x))$
+				\item Corresponding gradient descent training rule:\\ $\Delta w_j = \eta \sum\limits_{x\in\:k-NNs\:of\:x_q} K(d(x_q,x))(f(x) - \hat{f}(x)) a_j(x)$
+			\end{enumerate}
+	\end{enumerate}
+%\newpage
+%%%%%%%%%%
+\section{Bayesian networks}
+\begin{enumerate}
+	\item \textbf{Model expression}: directed acyclic graph (DAG)
+	\item \textbf{Joint probability distribution via chain rule}: $P(X_1,...,X_N) = P(X_1) \prod\limits_{i=1}^n P(X_i|X_1,...,X_{i-1})$
+	\item \textbf{Compact, Bayesian representation a joint probability distrubtion}: $P(X_1,...,X_N) = P(X_1) \prod\limits_{i=1}^n P(X_i|Parents(X_1))$
+	\item \textbf{Spare Candidate algorithm} (Friedman, 1999): 
+		\begin{enumerate}
+			\item Purpose: unsupervised method to learn the structure of a Bayes network
+			\item Overview: given data set $D$, initial network $B_0$, and parameter $k$; \emph{restrict} step; \emph{maximize} step; ... repeat until convergence
+			\item Mutual information: $I(X,Y) = \sum\limits_{x \in values(X)} \sum\limits_{y \in values(Y)} P(x,y) \log_{2} \frac{P(x,y)}{P(x)P(y)}$
+			\item Distance between distr. $P$ and $Q$ is evaluated using Kullback-Leibler (KL) divergence: $D_{KL}(P(X)\Vert Q(x)) = \sum\limits_x P(x) \log \frac{P(x)}{Q(x)}$
+		\end{enumerate}
+	\item \textbf{Practical consideration: missing data}:
+		\begin{enumerate}
+			\item Given: data with some missing values; model structure with initial model parameters
+			\item Repeat expectation maximization (EM) method until convergence
+				\begin{enumerate}
+					\item Expectation (E) step: using current model, compute expectation over missing values
+					\item Maximization (M): update model parameters with those that maximize probability of the data, i.e. use MLE or MAP
+				\end{enumerate}
+		\end{enumerate}
+	\item \textbf{Chow-Liu algorithm}: learns a Bayes network with a tree structure that maximizes the likelihood of the training data
+		\begin{enumerate}
+			\item Compute weight $I(X_i,X_j)$ of each possible edge $(X_i,X_j)$
+			\item Find maximum weight spanning tree (MSE); use Prim or Kruskal algorithms, for example
+			\item Assign edge directions in MST
+		\end{enumerate}
+\end{enumerate}
+%%%%%%%%%%
+\section{Naive Bayes}
+	\begin{enumerate}
+		\item \textbf{Bayes rule}: $P(A|B) = \frac{P(B|A)P(A)}{P(B)}$
+		\item \textbf{Conditional independence}: $X$ is conditionally independent of $Y$ given $Z$ if the probability distribution governing $X$ is independent of the value of $Y$, given the value of $Z$, e.g. $P(X|Y,Z) = P(X|Z)$
+		\item \textbf{Naive Bayes assumption}: $P(X_1...X_n|Y) = \prod\limits_{i} P(X_i|Y)$
+		\item \textbf{Naive Bayes classifier} (Mitchell, 1997): $v_{NB} = \underset{v_j \in V}{P(v_j)} \prod\limits_i P(a_i|v_j)$
+		\item \textbf{Naive Bayes algorithm for discrete-valued feature labels}:
+			\begin{enumerate}
+				\item Training: (1) for each value $y_k$, estimate $\pi_k \equiv P(Y = y_k)$, (2) for each value $x_{ij}$ of each attribute $X_i$, estimate $\theta_{ijk} \equiv P(X_i = x_{ij} | Y = y_k)$
+				\item Classification ($X^{new}$): \begin{center} $Y^{new} \leftarrow \underset{y_k}{argmax}\;P(Y=y_k) \prod\limits_i P(X_i^{new}|Y=y_k)$ \\
+					$\implies Y^{new} \leftarrow \underset{y_k}{argmax} \; \pi_k \prod\limits_i \theta_{ijk}$ \end{center}
+			\end{enumerate}
+		\item \textbf{Naive Bayes algorithm for discrete-valued feature labels}:
+			\begin{enumerate}
+				\item Training: (1) for each value $y_k$, estimate $\pi_k \equiv P(Y = y_k)$, (2) for each attribute $X_i$, estimate class conditional mean $\mu_{ik}$ and variance $\sigma_{ik}$
+				\item Classification ($X^{new}$): \begin{center} $Y^{new} \leftarrow \underset{y_k}{argmax}\;P(Y=y_k) \prod\limits_i P(X_i^{new}|Y=y_k)$ \\
+					$\implies Y^{new} \leftarrow \underset{y_k}{argmax} \; \pi_k \prod\limits_i Normal(X_i^{new},\mu_{ik},\sigma_{ik})$ \end{center}
+			\end{enumerate}
+		\item \textbf{Tree-augmented Naive Bayes (TAN)}:
+			\begin{enumerate}
+				\item Implementation algorithm:
+					\begin{enumerate}
+						\item Compute weight $I(X_i,X_j|Y)$ for each possible edge $(X_i,X_j)$ between features
+						\item Find maximum weight spanning tree (MST) for graph over $X_1 ... X_n$; use Prim's algorithm, for example
+						\item Assign edge directions in MST
+						\item Construct a TAN model by adding node for $Y$ and an edge from $Y$ to each $X_i$
+					\end{enumerate}
+				\item Conditional mutual information: \\ $I(X_i,X_j|Y) = \sum\limits_{x_i \in val(X_i)} \sum\limits_{x_j \in val(X_j)} \sum\limits_{y \in val(y)} P(x_i,x_j,y) \log_{2} \frac{P(x_i,x_j|y)}{P(x_i|y)P(x_j|y)}$ 
+				\item Laplace estimates (``add-1 smoothing''): 
+					\begin{enumerate}
+						\item For homework assignment 4: $P_{LAP,K}(x_i|y) = \frac{n_{rows}(X_i=x_i,Y=y)+K}{n_{rows}(Y=y)+K\abs{X_i}}$ where K=1 for homework assignment 4, and $\abs{X_i}$ is the number of distinct values for feature $X_i$.
+						\item Extension 1: $P_{LAP}(x_i,x_j|y) = \frac{n_{rows}(X_i=x_i,X_j=x_j,Y=y)+1}{n_{rows}(Y=y) + \abs{X_i}\abs{X_j}}$
+						\item Extension 2: $P_{LAP}(x_i,x_j,y) = \frac{n_{rows}(X_i=x_i,X_j=x_j,Y=y)+1}{n_{rows,total} + \abs{X_i}\abs{X_j}\abs{Y}}$
+					\end{enumerate}
+			\end{enumerate}
+	\end{enumerate}
+%\newpage
+%%%%%%%%%%
+\section{Linear regression}
+	\begin{enumerate}
+		\item \textbf{Problem statement}:
+			\begin{enumerate}
+				\item Given training data ${(x^{(i)},y^{(i)}):1 \leq i \leq m}$ i.i.d. from distribution $D$, find $f_w(x) = w^T x$ that minimizes $\hat{L}(f_w) = \frac{1}{m} \sum_{i=1}^m (w^T x^{(i)} - y^{(i)})^2$
+				\item Setting the gradient of $\hat{L}(f_w) = \frac{1}{m} \sum_{i=1}^m (w^T x^{(i)} - y^{(i)})^2 = \frac{1}{m} \abs{Xw-y}_2^2$ yields the ordinary least squares solution: $w = (X^T X)^{-1} X^T y$
+			\end{enumerate}
+		\item \textbf{Special cases}:
+			\begin{enumerate}
+				\item Linear regression with bias: find $f_{w,b}(x) = w^T x + b = (w')^T (x')$ to minimize the loss
+				\item Linear regression with lasso penalty: find $f_w(x) = w^T x$ that minimizes $\hat{L}(f_w) = \frac{1}{m} \sum_{i=1}^m (w^T x^{(i)} - y^{(i)})^2 + \lambda \abs{w}_1$
+			\end{enumerate}
+		\item \textbf{Evaluation metrics}: root mean squared error (RMSE), mean absolute error (MAE; average $l_1$ error), $R^2$
+			\begin{enumerate}
+				\item \textbf{$R^2$}: Evaluate and square $r = \frac{\sum_i (x_i - \bar{x})(y_i - \bar{y})} {\sqrt{\frac{1}{N}(x_i - \bar{x})^2} \sqrt{\frac{1}{N}(y_i - \bar{y})^2}}$
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\section{Logistic regression}
+	\begin{enumerate}
+		%\item Unlike linear regression, logistic regression is insensitive to outliers
+		\item \textbf{MLE with sigmoid}: $\hat{L}(w) = - \frac{1}{m} \sum\limits_{y^{(i)} = 1} \log \sigma (w^T x^{(i)}) - \frac{1}{m} \sum\limits_{y^{(i)} = 0} \log [1 - \sigma (w^T x^{(i)})]) $ has no closed-form solution; must use gradient descent
+		\item \textbf{Properties of the sigmoid function}
+			\begin{enumerate}
+				\item Bounded: $\sigma(a) = \frac{1}{1 + exp(-a)} \in (0,1)$
+				\item Symmetric: $1-\sigma(a) = \frac{exp(-a)}{1+exp(-a)} = \frac{1}{1 + exp(a)} = \sigma(-a)$
+				\item Gradient: $\sigma'(a) = \frac{exp(-a)}{(1+exp(-a))^2} = \sigma(a)(1-\sigma(a))$
+			\end{enumerate}
+		\item \textbf{Hypothesis class for multiclass logistic regression}:\\ $p(y=i|x) = \frac{exp( (w^i)^T x + b^i )}{\sum_j exp( (w^j)^T x + b^j )} $
+	\end{enumerate}
+%%%%%%%%%%
+\section{Discriminative v. generative learning}
+	\begin{enumerate}
+		\item \textbf{Discriminative approach}
+			\begin{enumerate}
+				\item Hypothesis $h \in H$ directly predicts the label given the features $y = h(x)$, i.e. $p(y|x) = h(x)$
+				\item Then, define a loss function $L(h)$ and find the hypothesis with minimum loss
+				\item In other words, learn $P(Y|X_1,...,X_n)$ directly
+				\item Example: linear regression $\rightarrow h_\theta(x) = <x,\theta>$ and $L(h_\theta) = \frac{1}{m} \sum\limits_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 $
+				\item More examples: logistic regression, SVM, some neural network topologies
+			\end{enumerate}
+		\item \textbf{Generative approach}
+			\begin{enumerate}
+				\item Hypothesis $h \in H$ specify a generative story for how the data was created, i.e. $h(x,y) = p(x,y)$
+				\item Then, pick a hypothesis by maximum likelihood estimation (MLE) or maximum a posteriori (MAP) estimation
+				\item In other words, estimate $P(Y)$ and $P(X1,...X_n|Y)$ for learning, and use Bayes' rule to compute $P(Y|X_1,...,X_n)$ for classification
+				\item Examples: Naive Bayes, Bayesian networks
+			\end{enumerate}\
+		\item \textbf{Naive Bayes vs. logistic regression}
+			\begin{enumerate}
+				\item Logistic regression (discr.): $f(x) = \frac{1}{1 + exp(-(w_0 + \sum\limits_{i=1}^n w_i x_i))}$
+				\item Naive Bayes (gen.): $P(Y=1|x_1,...x_n) = \frac{1}{1 + exp( -\ln \frac{P(Y=1)}{P(Y=0} - \sum\limits_{i=1}^n \frac{P(x_i|Y=1)}{P(x_i|Y=0)})}$
+				\item Generally, Naive Bayes has lower/higher predictive error than logistic regression when training sets are small/large; parameters converge to their asymptotic values more quickly in generative classifiers
+			\end{enumerate}
+		\item \textbf{Mathematical formulas}
+			\begin{enumerate}
+				\item $\theta^{MLE} = \underset{\theta}{argmax} \prod\limits_{i=1}^{N} p(x^{(i)}|\theta) $\\ e.g. $\hat{\theta}^{MLE} = \frac{\alpha_1}{\alpha_1 + \alpha_0}$ where $\alpha_1$ is the number of flipped heads and $\alpha_0$ is the number of flipped zeros
+				\item $\theta^{MAP} = \underset{\theta}{argmax} \prod\limits_{i=1}^{N} p(x^{(i)}|\theta)p(\theta)...$ this includes a prior probability! \\ e.g. $\hat{\theta}^{MAP} = \frac{\alpha_1 + \beta_1}{(\alpha_1 + \beta_1) + (\alpha_0 + \beta_0)}$ where $\beta_1$ is a hallucinated number of flipped heads and $\beta_0$ is a hallucinated number of flipped tails
+			\end{enumerate}
+	\end{enumerate}
+%\newpage
+%%%%%%%%%%
+\section{Neural networks}
+	\begin{enumerate}
+		\item \textbf{Activation functions}:
+			\begin{enumerate}
+				\item Sigmoid: $\sigma(x) = \frac{1}{1 + exp(x)} \implies \sigma'(x) = \sigma(x)[1-\sigma(x)]$
+				\item Hyperbolic tangent: $\sigma(x) = \frac{exp(x) - exp(-x)}{exp(x) + exp(-x)} \implies \sigma'(x) = 1-\sigma(x)^2 $
+			\end{enumerate}
+		\item \textbf{Cost functions}:
+			\begin{enumerate}
+				\item For regression, with $K$ outputs, the negative log-likelihood is given by the squared error: $J(\theta) = -\sum_n \sum_k (\hat{y}_{nk}(\theta) - y_{nk})^2 $
+				\item For classification, with $K$ classes, the negative log-likelihood is given by the cross entropy: $J(\theta) = -\sum_n \sum_k y_{nk} \log \hat{y}_{nk}(\theta) $
+			\end{enumerate}
+		\item \textbf{Perceptron algorithm}
+			\begin{enumerate}
+				\item If including an input of 1 (and $w_0$ weight), $y = sign(\sum\limits_{i=0}^h w_i x_i) \iff y = 1$ for $s > 0$ and $y = 0$ for $s < 0$
+				\item Example - AND function, i.e. ($X_1 \bigwedge X_2$): $y = sign(X_1 + X_2 - 1.5)$
+			\end{enumerate}
+		\item \textbf{Training procedure for one-layer network}
+			\begin{enumerate}
+				\item Initialize $w(0)$ with random values
+				\item For each j, calculate $\hat{y}^{(j)} = sign(x^{(j)T}w(t))$
+				\item Update: $w(t+1) = w(t) + \eta [y^{(j)} - \hat{y}^{(j)}]x^{(j)} $ where $\eta$ is the learning rate
+			\end{enumerate}
+		\item \textbf{Derivation of the general training procedure for multi-layer network, including back propagation}
+			\begin{enumerate}
+				\item Back propagation description: chain rule applied to the cost function
+				\item Stochastic gradient descent (SGD) method: $w_i(t+1) = w_i(t) - \eta \frac{\partial J(w)}{\partial w_i}$ where $J(w)$ is a cost function
+				\item Since, typically, $J(w) = \frac{1}{2}[\hat{y}^{(t)}-y^{(t)}]^2$, and $\hat{y}^{(t)} = \sigma(\sum\limits_{i=1}^k w_j x_j)$ \\ $w_i(t+1) = w_i(t) - \eta[\hat{y}^{(t)}-y^{(t)}] \sigma'(\sum\limits_{i=1}^k w_j x_j) x_i $ $ \implies w_i(t+1) = w_i(t) - \eta[\hat{y} - y](1-\hat{y}^2)x_i = w_i(t) - \eta \delta x_i$
+				\item The appearance of $\delta$ indicates the ``$\delta$ rule''
+			\end{enumerate}
+		\item \textbf{Expanded training procedure for multi-layer networks}
+			\begin{enumerate}
+				\item Consider a multi-layer network with input states $x_i$, second layer states $p_j$, third layer states $q_k$, and output layer states $y_l$
+					\begin{enumerate}
+						\item $p_j = \sigma(\sum_i \gamma_{ji} x_i)$; $\gamma \in \RR^{Nxn}$
+						\item $q_k = \sigma(\sum_j \beta_{kj} p_j)$; $\beta \in \RR^{mxN}$
+						\item $y_l = \sigma(\sum_k \alpha_{lk} q_k)$; $\alpha \in \RR^{mxM}$
+					\end{enumerate}
+				\item Update $\alpha$: $\alpha(t+1) = \alpha(t) - \eta\delta_l \hat{q}^T$ where $\delta_l = (\hat{y} - y).*(1-\hat{y}.^2)$ (\textsc{Matlab} notation)\
+				\item Update $\beta$: $\beta(t+1) = \beta(t) - \eta \bar{\delta}_k\hat{p}^T$ where $\bar{\delta}_k = \delta_l \alpha_{lk}(1-\hat{q}_k^2)p_j$
+				\item Update $\gamma$: ...
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\section{Computational learning theory, e.g. probably approximately correct (PAC) models}
+	\begin{enumerate}
+		\item \textbf{Motivation}:
+			\begin{enumerate}
+				\item Can we infer something about generalization error from training error?
+				\item Can we infer how many training instances are enough?
+				\item Do not require that $error_D(h) = 0$; instead, bind the error of a learned hypothesis by some constant $\epsilon \implies$ the probability of the learner failing to learn an accurate hypothesis is bounded by a constant $\delta$
+			\end{enumerate}
+		\item \textbf{True error ($error_D(h)$)}: defined as the probability that $h$ will misclassify an instance drawn at random according to $D$; \\ $error_D(h) \equiv \underset{x \in D}{Pr}[c(x) \neq h(x)]$
+		\item \textbf{PAC learnability}: Consider a concept class $C$ defined over a set of instances $X$ of length $n$ and a learner $L$ using hypothesis space $H$. $C$ is \emph{PAC learnable} by $L$ using $H$ if for all $c \in C$, distributions $D$ over $X$, $\epsilon$ such that $0 < \epsilon < 1/2$, and $\delta$ such that $0 < \delta < 1/2$, learner $L$ will probability at least $(1-\delta)$ output a hypothesis $h \in H$ such that $error_D(h) \leq \epsilon$, in time that is polynomial in $1/\epsilon$, $1/\delta$, $n$, and $size(c)$.
+		\item \textbf{Sample complexity for finite hypothesis space}: Consider a hypothesis space $H$, target concept $c$, instance distribution $D$, and set of training examples $D$ of $c$. The version space $VS_{H,D}$ is said to be $\epsilon$-exhausted with respect to $c$ and $D$, if every hypothesis $h$ in $VS_{H,D}$ has error less than $\epsilon$ with respect to $c$ and $D$; $(\forall h \in VS_{H,D}) error_D(h) < \epsilon $
+		\item \textbf{Vapnik-Chervonenkis (VC) dimension}: $VC(H)$, of hypothesis space $H$ defined over instance space $X$ is the size of the largest finite subset of $X$ shattered by $H$. If arbitrarily large finite sets of $X$ can be shattered by $H$, then $VC(H) \equiv \infty$. This metric essentially measures the complexity of hypothesis space $H$.
+		\item \textbf{Upper bounds on number of training examples sufficient for PAC learning}
+			\begin{enumerate}
+				\item PAC learning model: $m \geq \frac{1}{\epsilon}(\ln(1/\delta) + \ln(H))$
+				\item Agnostic learning model: $m \geq \frac{1}{2\epsilon^2} (\ln(1/\delta) + \ln(H))$
+				\item Upper bound in terms of the VC dimension: $m \geq \frac{1}{\epsilon} (4\log_{2}(2/\delta) + 8VC(H) \log_{2}(13/\epsilon))$
+				\item Lower bound in terms of VC dimension: $m \geq max [\frac{1}{\epsilon} \log(1/\delta), \frac{VC(C)-1}{32\epsilon}]$
+			\end{enumerate}
+		\item \textbf{Mistake bound model}: use to analyze the number of training examples a learner will misclassify before it exactly learns the target concept. For arbitrary concept class $C$, the best worst-case algorithm will make $Opt(C)$ mistakes, where $VC(C) \leq Opt(C) \leq \log_{2}(\abs{C})$
+		\item \textbf{Weighted majority algorithm}: combines the weighted votes of multiple prediction algorithms to classify new instances; the weights are learned for each prediction algorithm based on errors made over a sequence of examples
+	\end{enumerate}\
+%%%%%%%%%%
+\section{Kernal methods and the support vector machine (SVM)}
+	\begin{enumerate}
+		\item \textbf{Kernel methods}:
+			\begin{enumerate}
+				\item Design requirements: it is not required to design $\phi(\cdot)$; only need to design $k(x_i,x_j) = \phi(x_i)^T \phi(x_j)$
+				\item Common types of kernels:
+					\begin{enumerate}
+						\item Polynomial with fixed degree $d$ and constant $c$: $k(x,x') = (x^T x' + c)^d$ \\
+						$ \implies K(x,x') = (x_1 x_1' + x_2 x_2' + c)^2 = $ $\begin{bmatrix} x_1^2 \\ x_2^2 \\ \sqrt{2} x_1 x_2 \\ \sqrt{2c} x_1 \\ \sqrt{2c} x_2 \\ c \end{bmatrix}$ $\begin{bmatrix} x_1'^2 \\ x_2'^2 \\ \sqrt{2} x_1' x_2' \\ \sqrt{2c} x_1' \\ \sqrt{2c} x_2' \\ c \end{bmatrix}$
+						\item Radial basis function (RBF)/Gaussian with fixed bandiwidth $\sigma$: $k(x,x') = exp(-\Vert x-x' \Vert ^2 / 2 \sigma^2)$
+							\begin{enumerate}
+								\item Non-normalized version: $k'(x,x') = exp(x^T x' / \sigma^2)$
+								\item Power series expansion: $k'(x,x') = \sum\limits_i^{+\infty} \frac{(x^T x')^i}{\sigma^i i !}$
+							\end{enumerate}
+					\end{enumerate}
+				\item Kernel trick: implicitly use high-dimensional mappings without explicitly computing them
+				\item Kernel algebra allows the construction of new kernels, e.g. $k(x,x') = 2 k_1(x,x') + 3 k_2(x,x')$
+				\item Can integrate kernel functions into neural networks
+			\end{enumerate}
+		\item \textbf{Mathematical, optimization background for the SVM}:
+			\begin{enumerate}
+				\item Simplified optimization objective: $\underset{w,b}{min} \frac{1}{2} \Vert w \Vert ^2$ and $y_i (w^T x_i + b) \geq 1, \forall i$
+				\item Lagrange multiplier method
+					\begin{enumerate}
+						\item Consider the optimization problem: $\underset{w}{min} f(w)$, where $g_i(w) \leq 0, \forall 1 \leq i \leq k$, and $h_j(w) = 0, \forall 1 \leq j \leq l$
+						\item The generalized Lagrangian is: $\Lagr(w,\alpha,\beta) = f(w) + \sum\limits_i \alpha_i g_i(w) + \sum\limits_j \beta_j h_j(w)$ where the $\alpha_i$ and $\beta_i$ are Lagrangian multipliers
+						\item Lagrange duality - the primal problem: $p^* := \underset{w}{min} f(w) = \underset{w}{min} \underset{\alpha,\beta:\alpha_i \geq 0}{max} \Lagr(w,\alpha,\beta)$
+						\item Lagrange duality - the dual problem: $d^* := \underset{\alpha,\beta:\alpha_i \geq 0}{max} \underset{w}{min}\; \Lagr(w,\alpha,\beta)$
+						\item It is always true that $d^* \leq p^*$; under Karush-Kuhn-Tucker (KKT) conditions, $d^* = p^*$
+					\end{enumerate}
+				\item Using quadratic programming and enforcing KKT conditions reduces the optimization to the dual problem: \\ $\Lagr(w,\beta,\alpha) = \sum\limits_i \alpha_i - \frac{1}{2} \sum\limits_{ij} \alpha_i \alpha_j y_i y_j x_i^T x_j$ $\implies \sum\limits_i \alpha_i y_i = 0$ and $\alpha_i \geq 0$ \\
+				\item Since $w = \sum_i \alpha_i y_i x_i$, the result is $w^Tx + b = \sum_i \alpha_i y_i x_i^T x + b$ where $x_i^T x$ terms only depend on inner products
+				\item The final solution is a sparse linear combination of the training instances; instances with $\alpha_i > 0$ are called \emph{support vectors}
+				\item Minimizing the VC dimension $\rightarrow$ improves the error bound, maximizes the margin
+			\end{enumerate}
+		\item \textbf{Variants of the classic SVM}: hard/soft-margin SVM, support vector regression (SVR)
+	\end{enumerate}
+%%%%%%%%%%
+\section{Ensemble methods}
+	\begin{enumerate}
+		\item \textbf{Definition of ensemble}: a set of learned models whose individual decisions are combined in some way to make predictions for new instances; recommended for almost any practical learning problem
+		\item \textbf{Ensemble approaches}: bagging, random forests, boosting, skewing, stacking, error correcting output codes
+			\begin{enumerate}
+				\item Bagging: choose different subsamples of the training set; works best with unstable learning methods, i.e. those that tend to overfit training data
+					\begin{enumerate}
+						\item Learning: $D^{(i)} \leftarrow m$ instances randomly drawn from $D$ with replacement; $h_i \leftarrow$ model learned using $L$ on $D^{(i)}$
+						\item Classification: given test instance $x$, predict $y$ via $PluralityVote(h_1(x) ... h_T(x))$
+						\item Regression: given test instance $x_i$, predict $y$ as $mean(h_1(x) ... h_T(x))$
+					\end{enumerate}
+				\item Boosting, skewing: use different probability distributions over the training instances, e.g. \emph{Adaboost} from (Freund and Schapire, 1997)
+					\begin{enumerate}
+						\item \emph{Adaboost} procedure, given learner $L$, stages $T$, and training set $D$: initialize instance weights, normalize weights, calculate weighted error, lower error $\rightarrow$ smaller $\beta_t$, down-weigh correct examples, and finally return $h(x) = \underset{y}{argmax} \sum\limits_{t=1}^T (\log \frac{1}{\beta_t}) \delta(h_t(x),y)$
+					\end{enumerate}
+				\item Random forests: choose different features and subsamples
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\section{Feature selection}
+	\begin{enumerate}
+		\item \textbf{List of methods}: filtering-based, e.g. information gain and Markov blanket filtering, frequency pruning, wrapper-based, forward selection, backward elimination, $L_1$ and $L_2$ penalties, lasso and ridge regression, dimensionality reduction
+		\item \textbf{Markov blanket approach}: a Markov blanket $M_i$ for a variable $X_i$ is a set of variables such that all other variables are conditionally independent of $X_i$ given $M_i$; try to find and remove features that minimize a criterion, e.g. if $Y$ is conditionally independent on feature $X_i$ given a subset of other features, we should be able to omit $X_i$
+		\item \textbf{Frequency pruning}: remove features whose distributions are highly skewed, e.g. remove very high and low frequency words in text document spam filtering
+		\item \textbf{Wrapper-based feature selection}: evaluate each feature set by using the learning method to score it, i.e. ``how accurate of a model can be learned with it?''
+		\item \textbf{Forward selection}: uses hill climbing search to score feature set $G$ by learning model(s) with learning method $L$ and assessing model accuracy
+		\item \textbf{Shrinking/regularization}: bias the learning process toward a small number of features
+			\begin{enumerate}
+				\item Example: linear regression
+					\begin{enumerate}
+						\item Lasso regression adds the $L_1$ norm of the weights as a penalty term: $E(w) = \sum\limits_{d\in D} (y^{(d)} - w_0 - \sum\limits_{i=1}^n x_i^{(d)} w_i)^2 + \lambda \sum\limits_{i=1}^n \abs{w_i} $
+						\item Ridge regression adds the $L_2$ norm of the weights as a penalty term: $E(w) = \sum\limits_{d\in D} (y^{(d)} - w_0 - \sum\limits_{i=1}^n x_i^{(d)} w_i)^2 + \lambda \sum\limits_{i=1}^n w_i^2 $
+						\item Other related regression methods: Elastic net, group lasso, fused lasso
+					\end{enumerate}
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\section{Dimensionality reduction}
+	\begin{enumerate}
+		\item \textbf{Introduction}: Powerful, unsupervised learning techniques, for extracting lower dimensional structure from high dimensional datasets, e.g. PCA, kernel PCA, and ICA, are useful for visualization, resource utilization increases, better generalization properties, noise removal, and further processing by machine learning algorithms
+		\item \textbf{Principal component analysis (PCA)}: an orthogonal projection or transformation of the data into a potentially lower dimensional subspace so that the variance of the projected data is maximized; extracts variance structure from high dimensional data sets
+			\begin{enumerate}
+				\item The first principal component (PC) represents the direction of greatest variability in the data; the second (orthogonal; uncorrelated) PC represents the direction of second greatest variability
+				\item Critical computations: eigen-decomposition, singular value decomposition (SVD)
+				\item Find a vector that maximizes the sample variance of projected data: $\frac{1}{n} \sum\limits_{i=1}^n (v_T x_i)^2 = v^T X X^T v$ $\implies ... \implies (X X^T)v = \lambda v$
+					\begin{enumerate}
+						\item The first PC $v$ is the eigenvector of sample correlation/covariance matrix $X X^T$
+						\item The eigenvalue $\lambda$ denotes the amount of variability captured along the PC direction; in general $\lambda_1 \geq \lambda_2 \geq \lambda_3 \geq ...$
+					\end{enumerate}
+				\item Interpretations:
+					\begin{enumerate}
+						\item Maximum variance direction: the first PC is a vector $v$ such that projection onto this vector captures maximum variance in the data considering all of the possible one-dimensional projections
+						\item Minimum reconstruction error: the first PC is a vector $v$ such that projection onto this vector yields minimum mean squared error (MSE) reconstruction; can be described with Pythagorean theorem
+					\end{enumerate}
+				\item Practical usage: only keep data projections onto PCs with large eigenvalues; components of smaller significance can be neglected
+				\item Applications: k-means clustering
+				\item Limitations: second-order statistical model, linear projections only
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\section{Reinforcement learning}
+	\begin{enumerate}
+		\item \textbf{Description of the procedure}: (1) sense world, (2) reason, (3) choose an action to perform, (4) get feedback (usually reward = 0), (5) learn
+		\item \textbf{Pseudo-procedure}: given a set of states $S$ and actions $A$ - at each time $t$, the agent observes state $s_t \in S$, then chooses action $a_t \in A$; then, the agent receives a reward $r_t$ and indexes to state $s_{t+1}$
+		\item \textbf{Value function for a policy}:
+			\begin{enumerate}
+				\item Given a policy $\pi : S \rightarrow A$, define $V^\pi(s) = \sum\limits_{t=0}^\infty \gamma^t E[r_t]$; an optimal policy $\pi^*$ is desired where $\pi^* = \underset{\pi}{argmax}\;V^\pi(s)$ for all $s$
+				\item Key assumption: value iteration for learning $V^\pi (s)$ assumes a model of the world, i.e. $P(s_t|s_{t-1}, a_{t-1})$, is possessed
+			\end{enumerate}
+		\item \textbf{$Q$ learning introduction}: 
+			\begin{enumerate}
+				\item Define a new function, closely related to $V^*$, i.e.: define $Q(s,a) \leftarrow E[r(s,a)] + \gamma E_{s'|s,a}[V^*(s')]$ when $V^* (s) \leftarrow E[r(s,\pi^*(s))] + \gamma E_{s'|s,\pi^*(s)}[V^*(s')]$
+				\item If the agent knows $Q(s,a)$, it can choose optimal action without knowing $P(s'|s,a)$, i.e.: $\pi^*(s) \leftarrow \underset{a}{argmax}\;Q(s,a)$ and $V^*(s) \leftarrow \underset{a}{argmax}\;Q(s,a)$				
+			\end{enumerate}
+		\item \textbf{$Q$ learning for deterministic worlds}:
+			\begin{enumerate}
+				\item for each $s$, $a$, inialize table entry $\hat{Q}(s,a) \leftarrow 0$
+				\item observe current state $s$
+				\item do forever: select an action $a$ and execute it; receive immediate reward $r$; observe the new state $s'$; update table entry using $\hat{Q}(s,a) \leftarrow r + \gamma\;\underset{a'}{max} \hat{Q}'\;(s',a')$; $s \leftarrow s'$
+			\end{enumerate}
+	\end{enumerate}
+%%%%%%%%%%
+\clearpage  % do not erase this!
+
+%\clearpage
+
+%\bibliographystyle{apalike}
+
+\end{multicols}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

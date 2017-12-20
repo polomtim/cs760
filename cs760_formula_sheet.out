@@ -1,0 +1,15 @@
+\BOOKMARK [1][-]{section.1}{Evaluating models and algorithms}{}% 1
+\BOOKMARK [1][-]{section.2}{Decision trees}{}% 2
+\BOOKMARK [1][-]{section.3}{Instance-based methods, e.g. k-Nearest Neighbor \(k-NN\)}{}% 3
+\BOOKMARK [1][-]{section.4}{Bayesian networks}{}% 4
+\BOOKMARK [1][-]{section.5}{Naive Bayes}{}% 5
+\BOOKMARK [1][-]{section.6}{Linear regression}{}% 6
+\BOOKMARK [1][-]{section.7}{Logistic regression}{}% 7
+\BOOKMARK [1][-]{section.8}{Discriminative v. generative learning}{}% 8
+\BOOKMARK [1][-]{section.9}{Neural networks}{}% 9
+\BOOKMARK [1][-]{section.10}{Computational learning theory, e.g. probably approximately correct \(PAC\) models}{}% 10
+\BOOKMARK [1][-]{section.11}{Kernal methods and the support vector machine \(SVM\)}{}% 11
+\BOOKMARK [1][-]{section.12}{Ensemble methods}{}% 12
+\BOOKMARK [1][-]{section.13}{Feature selection}{}% 13
+\BOOKMARK [1][-]{section.14}{Dimensionality reduction}{}% 14
+\BOOKMARK [1][-]{section.15}{Reinforcement learning}{}% 15
